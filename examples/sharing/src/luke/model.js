@@ -10,15 +10,15 @@ export const initialState: State = {
   fullName: null,
 };
 
-export type Action = {
+export type Patch = {
   type: 'LoadStart',
 } | {
   type: 'LoadSuccess',
   fullName: string,
 };
 
-export function reduce(state: State, action: Action): State {
-  switch (action.type) {
+export function applyPatch(state: State, patch: Patch): State {
+  switch (patch.type) {
   case 'LoadStart':
     return {
       ...state,
@@ -28,7 +28,7 @@ export function reduce(state: State, action: Action): State {
     return {
       ...state,
       isLoading: false,
-      fullName: action.fullName,
+      fullName: patch.fullName,
     };
   default:
     return state;

@@ -1,6 +1,7 @@
 // @flow
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import './App.css';
+import Counter from './counter/view';
 import Luke from './luke/view';
 import * as Controller from './controller';
 import * as LukeController from './luke/controller';
@@ -11,7 +12,7 @@ type Props = {
   state: Model.State,
 };
 
-class App extends Component<void, Props, void> {
+export default class App extends PureComponent<void, Props, void> {
   handleFirstDispatch: (action: LukeController.Action) => void = (action) => {
     this.props.dispatch({
       type: 'First',
@@ -35,7 +36,7 @@ class App extends Component<void, Props, void> {
         </div>
         <div className="App-content">
           <h3>Number of requests</h3>
-          <p>{this.props.state.total}</p>
+          <Counter state={this.props.state.counter} />
           <h3>First</h3>
           <Luke
             dispatch={this.handleFirstDispatch}
@@ -51,5 +52,3 @@ class App extends Component<void, Props, void> {
     );
   }
 }
-
-export default App;

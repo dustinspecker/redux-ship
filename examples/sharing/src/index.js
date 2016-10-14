@@ -15,7 +15,16 @@ function* controlWithLog(action: Controller.Action) {
 }
 
 function dispatch(action: Controller.Action): void {
-  Ship.run(Effect.run, store.dispatch, store.getState, controlWithLog(action));
+  Ship.run(
+    Effect.run,
+    store.dispatch,
+    store.getState,
+    Ship.map(
+      (commit) => ({type: 'Patch', patch: Controller.applyCommit(commit)}),
+      (state) => state,
+      controlWithLog(action)
+    )
+  );
 }
 
 function render() {

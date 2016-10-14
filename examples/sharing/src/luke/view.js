@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import './view.css';
 import * as Controller from './controller';
 import * as Model from './model';
@@ -9,7 +9,7 @@ type Props = {
   state: Model.State,
 };
 
-class Luke extends Component<void, Props, void> {
+export default class Luke extends PureComponent<void, Props, void> {
   handleClick: () => void = () => {
     this.props.dispatch({
       type: 'Load',
@@ -32,5 +32,3 @@ class Luke extends Component<void, Props, void> {
     );
   }
 }
-
-export default Luke;

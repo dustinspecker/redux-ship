@@ -6,4 +6,8 @@ const middlewares = [
   createLogger(),
 ];
 
-export default createStore(Model.reduce, Model.initialState, applyMiddleware(...middlewares));
+export default createStore(
+  (state, action) => action.type === 'Patch' ? Model.applyPatch(state, action.patch) : state,
+  Model.initialState,
+  applyMiddleware(...middlewares)
+);

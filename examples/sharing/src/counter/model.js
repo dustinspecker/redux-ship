@@ -4,12 +4,12 @@ export type State = number;
 
 export const initialState: State = 0;
 
-export type Action = {
+export type Patch = {
   type: 'Increment',
 };
 
-export function reduce(state: State, action: Action): State {
-  switch (action.type) {
+export function applyPatch(state: State, patch: Patch): State {
+  switch (patch.type) {
   case 'Increment':
     return state + 1;
   default:

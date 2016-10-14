@@ -1,48 +1,30 @@
 // @flow
+import * as CounterModel from './counter/model';
 import * as LukeModel from './luke/model';
-import * as ModelTotal from './model/total';
 
 export type State = {
+  counter: CounterModel.State,
   first: LukeModel.State,
   second: LukeModel.State,
-  total: ModelTotal.State,
 };
 
 export const initialState: State = {
+  counter: CounterModel.initialState,
   first: LukeModel.initialState,
   second: LukeModel.initialState,
-  total: ModelTotal.initialState,
 };
 
-export type Action = {
-  type: 'First',
-  action: LukeModel.Action,
-} | {
-  type: 'Second',
-  action: LukeModel.Action,
-} | {
-  type: 'Total',
-  action: ModelTotal.Action,
+export type Patch = {
+  counter?: CounterModel.Patch,
+  first?: LukeModel.Patch,
+  second?: ?LukeModel.Patch,
 };
 
-export function reduce(state: State, action: Action): State {
-  switch (action.type) {
-  case 'First':
-    return {
-      ...state,
-      first: LukeModel.reduce(state.first, action.action),
-    };
-  case 'Second':
-    return {
-      ...state,
-      second: LukeModel.reduce(state.second, action.action),
-    };
-  case 'Total':
-    return {
-      ...state,
-      total: ModelTotal.reduce(state.total, action.action),
-    };
-  default:
-    return state;
-  }
+export function applyPatch(state: State, patch: Patch): State {
+  return {
+    ...state,
+    ...patch.counter && {counter: CounterModel.applyPatch(state.counter, patch.counter)},
+    ...patch.first && {first: LukeModel.applyPatch(state.first, patch.first)},
+    ...patch.second && {second: LukeModel.applyPatch(state.second, patch.second)},
+  };
 }

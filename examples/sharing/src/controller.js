@@ -1,6 +1,5 @@
 // @flow
 import * as Ship from 'redux-ship';
-import * as Effect from './effect';
 import * as LukeController from './luke/controller';
 import * as Model from './model';
 
@@ -12,53 +11,56 @@ export type Action = {
   action: LukeController.Action,
 };
 
-export function* control(action: Action): Ship.Ship<Effect.t, Model.Action, Model.State, void> {
+export type State = Model.State;
+
+export type Commit = {
+  type: 'First',
+  commit: LukeController.Commit,
+} | {
+  type: 'Second',
+  commit: LukeController.Commit,
+};
+
+export type Patch = Model.Patch;
+
+export function applyCommit(commit: Commit): Patch {
+  switch (commit.type) {
+  case 'First': {
+    const patch = LukeController.applyCommit(commit.commit);
+    return {
+      ...patch.counter && {counter: patch.counter},
+      ...patch.luke && {first: patch.luke},
+    };
+  }
+  case 'Second': {
+    const patch = LukeController.applyCommit(commit.commit);
+    return {
+      ...patch.counter && {counter: patch.counter},
+      ...patch.luke && {second: patch.luke},
+    };
+  }
+  default:
+    return {};
+  }
+}
+
+export function* control(action: Action): Ship.Ship<*, Commit, State, void> {
   switch (action.type) {
   case 'First':
     return yield* Ship.map(
-      (action) => {
-        switch (action.type) {
-        case 'Luke':
-          return {
-            type: 'First',
-            action: action.action,
-          };
-        case 'Total':
-          return {
-            type: 'Total',
-            action: action.action,
-          };
-        default:
-          return action;
-        }
-      },
+      (commit) => ({type: 'First', commit}),
       (state) => ({
+        counter: state.counter,
         luke: state.first,
-        total: state.total,
       }),
       LukeController.control(action.action)
     );
   case 'Second':
     return yield* Ship.map(
-      (action) => {
-        switch (action.type) {
-        case 'Luke':
-          return {
-            type: 'Second',
-            action: action.action,
-          };
-        case 'Total':
-          return {
-            type: 'Total',
-            action: action.action,
-          };
-        default:
-          return action;
-        }
-      },
+      (commit) => ({type: 'Second', commit}),
       (state) => ({
+        counter: state.counter,
         luke: state.second,
-        total: state.total,
       }),
       LukeController.control(action.action)
     );
